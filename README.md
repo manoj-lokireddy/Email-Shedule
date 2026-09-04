@@ -85,7 +85,7 @@ No cron, `node-cron`, agenda, persistent `setTimeout`, or in-memory rate counter
 
 ## Environment
 
-See [backend/.env.example](backend/.env.example) and [frontend/.env.example](frontend/.env.example). Important values include `DATABASE_URL`, `REDIS_HOST`, `ELASTICSEARCH_URL`, Google/Slack OAuth values, Ethereal `SMTP_*`, `JWT_SECRET`, `WORKER_CONCURRENCY`, and `MAX_EMAILS_PER_HOUR_PER_SENDER`.
+See [backend/.env.example](backend/.env.example) and [frontend/.env.example](frontend/.env.example). Important values include `DATABASE_URL`, `REDIS_URL` (or `REDIS_HOST`/`REDIS_PORT`), `ELASTICSEARCH_URL`, Google/Slack OAuth values, Ethereal `SMTP_*`, `JWT_SECRET`, `WORKER_CONCURRENCY`, and `MAX_EMAILS_PER_HOUR_PER_SENDER`.
 
 ## Tests
 
