@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmailStatus {
+  scheduled
+  processing
+  sent
+  failed
+  delayed
+}
+model User {
+  id String @id @default(cuid())
+  googleId String @unique
+  name String
+  email String @unique
+  avatar String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  senders Sender[]
+  campaigns EmailCampaign[]
+  slackConnection SlackConnection?
+}
+model Sender {
+  id String @id @default(cuid())
+  userId String
+  email String
+  name String
+  etherealUsername String
+  etherealPassword String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns EmailCampaign[]
+  jobs EmailJob[]
+  @@index([userId])
+}
+model EmailCampaign {
+  id String @id @default(cuid())
+  userId String
+  senderId String
+  subject String
+  body String
+  startTime DateTime
+  delayBetweenEmails Int
+  hourlyLimit Int
+  totalRecipients Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender Sender @relation(fields: [senderId], references: [id])
+  jobs EmailJob[]
+  @@index([userId, createdAt])
+}
+model EmailJob {
+  id String @id @default(cuid())
+  campaignId String
+  senderId String
+  recipientEmail String
+  subject String
+  body String
+  scheduledAt DateTime
+  sentAt DateTime?
+  status EmailStatus @default(scheduled)
+  bullJobId String @unique
+  attempts Int @default(0)
+  errorMessage String?
+  messageId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  campaign EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  sender Sender @relation(fields: [senderId], references: [id])
+  @@index([campaignId, status])
+  @@index([recipientEmail])
+  @@index([status, scheduledAt])
+}
+model SlackConnection {
+  id String @id @default(cuid())
+  userId String @unique
+  accessToken String
+  teamId String
+  teamName String
+  connected Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

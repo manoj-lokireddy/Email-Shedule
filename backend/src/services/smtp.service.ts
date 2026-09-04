@@ -1,0 +1,4 @@
+import nodemailer from 'nodemailer';
+import { config } from '../config';
+export async function sendSmtp(sender: { email: string; name: string; etherealUsername: string; etherealPassword: string }, recipient: string, subject: string, body: string) { const isGmail = config.smtp.host === 'smtp.gmail.com'; const transport = nodemailer.createTransport({ host: config.smtp.host, port: config.smtp.port, secure: config.smtp.port === 465, auth: { user: isGmail ? config.smtp.user : (sender.etherealUsername || config.smtp.user), pass: isGmail ? config.smtp.password.replace(/\s/g, '') : (sender.etherealPassword || config.smtp.password) } }); const result = await transport.sendMail({ from: `${sender.name} <${sender.email}>`, to: recipient, subject, text: body, html: body.replace(/\n/g, '<br>') }); const preview = nodemailer.getTestMessageUrl(result); if (preview) console.log(`Ethereal preview: ${preview}`); return { messageId: result.messageId, previewUrl: preview };
+}

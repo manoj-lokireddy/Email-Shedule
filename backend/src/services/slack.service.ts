@@ -1,0 +1,4 @@
+import axios from 'axios';
+import { prisma } from '../config/db';
+import { redis } from '../config';
+export async function notifyRateLimit(userId: string, senderEmail: string, limit: number, window: string) { const key = `slack-notified:${userId}:${window}`; if (!(await redis.set(key, '1', 'EX', 7200, 'NX'))) return; const connection = await prisma.slackConnection.findUnique({ where: { userId } }); if (!connection?.connected) return; try { await axios.post('https://slack.com/api/chat.postMessage', { channel: connection.teamId, text: `Email rate limit reached. Sender: ${senderEmail}. Hourly limit: ${limit}. Additional emails are delayed until the next available hour.` }, { headers: { Authorization: `Bearer ${connection.accessToken}` } }); } catch (error) { console.error('Slack notification failed', error); } }

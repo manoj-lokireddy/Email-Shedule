@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
+import { prisma } from '../config/db';
+import { config } from '../config';
+import { requireAuth } from '../middleware/auth';
+import { signUser } from '../auth/oauth';
+const router = Router(); router.use(cookieParser());
+router.get('/google', (_req, res, next) => { if (!config.google.id || !config.google.secret) return res.status(503).json({ error: 'Google OAuth is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to backend/.env.' }); next(); }, passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${config.frontendUrl}/login?error=oauth` }), (req, res) => { const token = signUser((req.user as any).id); res.cookie('reachinbox_token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 604800000 }); res.redirect(config.frontendUrl); });
+router.get('/me', requireAuth, async (req, res) => res.json({ user: await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, name: true, email: true, avatar: true } }) }));
+router.post('/logout', (_req, res) => { res.clearCookie('reachinbox_token'); res.json({ ok: true }); });
+export default router;
