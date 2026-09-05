@@ -43,7 +43,7 @@ npm --prefix backend exec prisma generate
 npm --prefix backend exec prisma migrate dev --name init
 ```
 
-Fill `backend/.env` with OAuth, SMTP, and JWT values. Never commit either `.env` file. Google callback is `http://localhost:4000/api/auth/google/callback`; Slack callback is `http://localhost:4000/api/slack/callback`.
+Fill `backend/.env` with OAuth, SMTP, and JWT values. Never commit either `.env` file. Google callback is `http://localhost:5174/api/auth/google/callback`; Slack callback is `http://localhost:5174/api/slack/callback`.
 
 Run each process in its own terminal:
 
@@ -53,14 +53,14 @@ npm --prefix backend run worker
 npm --prefix frontend run dev
 ```
 
-Open `http://localhost:5173`. The authenticated API is at `http://localhost:4000`. Bull Board is at `http://localhost:4000/admin/queues` and requires the same session cookie.
+Open `http://localhost:5173`. The authenticated API is at `http://localhost:5174`. Bull Board is at `http://localhost:5174/admin/queues` and requires the same session cookie.
 
 ## Sender setup
 
 Sender credentials are intentionally never returned by the API. Create a sender once after Google login using the API, replacing the values with an Ethereal account:
 
 ```powershell
-Invoke-RestMethod -Method Post http://localhost:4000/api/senders `
+Invoke-RestMethod -Method Post http://localhost:5174/api/senders `
   -ContentType 'application/json' `
   -WebSession $session `
   -Body '{"email":"test@example.com","name":"Test Sender","etherealUsername":"...","etherealPassword":"..."}'

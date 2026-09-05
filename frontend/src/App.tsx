@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { api } from './services/api';
 import type { EmailJob, Sender, Slack, User } from './types';
 
-const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api';
+const apiUrl = import.meta.env.VITE_API_URL;
 const formatDate = (value: string) => new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
 function Login() {
