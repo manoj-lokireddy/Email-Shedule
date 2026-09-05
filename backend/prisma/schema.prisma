@@ -16,7 +16,8 @@ enum EmailStatus {
 }
 model User {
   id String @id @default(cuid())
-  googleId String @unique
+  username String @unique @map("googleId")
+  passwordHash String @default("")
   name String
   email String @unique
   avatar String?

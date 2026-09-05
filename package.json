@@ -2,7 +2,7 @@
   "name": "email-scheduler",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix backend run worker\" \"npm --prefix frontend run dev\"",
     "test": "npm --prefix backend test"
   },
   "devDependencies": { "concurrently": "^9.1.2" }
